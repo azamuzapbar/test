@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Guest book {% endblock %}
+{% block menu %} {% endblock %}
+{% block content %}
+{% if request.user.is_authenticated %}
+{% else %}
+<p>You must be authenticated</p>
+{% endif %}
+<div class="row justify-content-center">
+    {% for post in posts %}
+    <div class="card post-card">
+        <div class="card-body">
+            {% if post.image %}
+            <img class="card-img-top" src="{{ post.image.url }}" alt="{{ post.description }}">
+            {% endif %}
+            <div class="post-card-footer">
+                <p class="card-text mb-0">
+                    Likes: <span class="like-count">{{ post.like_count }}</span>
+                    <a href="{% url 'like_post' post.id %}" class="like-btn">
+                        <img src="{% static 'like.png' %}" alt="Like">
+                    </a>
+                </p>
+                <p class="card-text mb-0">{{ post.author.username }}{{ post.description }}</p>
+                <p class="card-text mb-0">{{ post.created_at }}</p>
+            </div>
+        </div>
+        <div class="card-footer">
+            <p><a href="{% url 'comment_create' post.pk %}">Add a Comment</a></p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<script type="text/javascript" src="{% static 'js/index.js' %}"></script>
+{% endblock %}

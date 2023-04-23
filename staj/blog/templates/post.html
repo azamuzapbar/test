@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Post Detail {% endblock %}
+
+{% block content %}
+<style>
+    .post-card {
+        margin: 15px;
+        max-width: 850px;
+        width: 100%;
+    }
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+</style>
+
+<div class="card post-card">
+    <div class="card-body">
+        {% if post.image %}
+        <img class="card-img-top" src="{{ post.image.url }}" alt="{{ post.description }}">
+        {% endif %}
+
+        <div class="post-card-footer">
+            <p class="card-text mb-0">
+                Likes: {{ post.like_count }}
+                <a href="{% url 'like_post' post.id %}">
+                    <img src="{% static 'like.png' %}" alt="Like">
+                </a>
+            </p>
+            <p class="card-text mb-0">{{ post.author.username }}{{ post.description }}</p>
+            <p class="card-text mb-0">{{ post.created_at }}</p>
+        </div>
+    </div>
+    <div class="card-footer">
+    {% for comment in post.comments.all %}
+    <div class="comment-card">
+        <p>{{ comment.author.username }} {{ comment.text }}</p>
+    </div>
+    {% empty %}
+    {% endfor %}
+    <p><a href="{% url 'comment_create' post.pk %}">Add a Comment</a></p>
+</div>
+
+</div>
+{% endblock %}

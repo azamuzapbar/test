@@ -1,0 +1,23 @@
+<div class="container">
+    <div class="box">
+        <div class="head_text heading text-center">
+                <p class="main-title-home">{{ main_title }}</p>
+            </div>
+        {% for f in form %}
+        <div class="row justify-content-center">
+           <div class="col-4">
+               <label class="form-label" for="{{ f.id_for_label }}">{{ f.label}}:</label>
+           </div>
+           <div class="col-4">
+               <div class="row-form-errors">{{ f.errors }}</div>
+               {{ f }}
+           </div>
+        </div>
+        {% endfor %}
+        <div class="row justify-content-center">
+            <div class="col-10 text-center">
+                <button type="submit" class="btn btn-secondary btn-block">{{ button_text }}</button>
+            </div>
+        </div>
+    </div>
+</div>

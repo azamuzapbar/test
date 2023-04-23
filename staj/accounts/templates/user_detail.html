@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static%}
+{% block title %}Пользователь{% endblock %}
+
+{% block menu %}
+<li><a href="{% url 'change' user_obj.pk %}" class="btn btn-primary">Редактировать</a></li>
+<li><a href="#" class="btn btn-primary mb-3">Смена пароля</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-4">
+        <img class="avatar rounded-circle" src="{{ user_obj.avatar.url }}" width="150" height="150" alt="user picture">
+        <h4>{{ user_obj.username }}</h4>
+        {% if user.is_authenticated %}
+        {% if user != account %}
+        {% if account in user.subscriptions.all %}
+        <form action="{% url 'unsubscribe' account.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Unsubscribe</button>
+        </form>
+        {% else %}
+        <form action="{% url 'subscribe' user_obj.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Subscribe</button>
+        </form>
+        {% endif %}
+        {% endif %}
+        {% endif %}
+    </div>
+
+
+    <div class="col-md-8">
+        <p>Имя: {{ user_obj.first_name }}</p>
+
+        <span class="count">{{ user_obj.subscriptions_count }}</span> подписчиков
+        <br>
+        <span class="count">{{ user_obj.subscribers_count }}</span> подписок
+    </div>
+
+</div>
+
+<div class="row">
+    {% for post in user.posts.all %}
+    <div class="col-md-4 mb-3">
+        <div class="card post-card h-100">
+            <a href="{% url 'post_detail' pk=post.pk %}" class="card-body">
+                {% if post.image %}
+                <img class="card-img-top" src="{{ post.image.url }}" alt="{{ post.description }}">
+                {% endif %}
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+<style>
+    .avatar {
+        border-radius: 50%;
+    }
+    .card {
+        margin-bottom: 20px;
+    }
+</style>
