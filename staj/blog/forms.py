@@ -1,6 +1,6 @@
 from django import forms
 
-from posts.models import Post, Comment
+from blog.models import Post, Comment
 
 
 class SearchForm(forms.Form):
@@ -30,3 +30,6 @@ class CommentForm(forms.ModelForm):
         if commit:
             comment.save()
         return comment
+
+class FavoriteForm(forms.Form):
+    note = forms.CharField(max_length=30, required=True, label='Заметка')

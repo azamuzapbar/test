@@ -1,8 +1,11 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.http import urlencode
-from django.views.generic import ListView
-from posts.forms import SearchForm
-from posts.models import Post
+from django.views.generic import ListView, FormView
+from blog.forms import SearchForm,FavoriteForm
+from blog.models import Post, Favorite
+from django.contrib import messages
 
 
 class IndexView(ListView):
@@ -34,6 +37,20 @@ class IndexView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         context['form'] = self.form
+        context['favorite_form'] = FavoriteForm()
         if self.search_value:
             context['query'] = urlencode({'search': self.search_value})
         return context
+
+class FavoriteView(LoginRequiredMixin, FormView):
+    form_class = FavoriteForm
+    def post(self, request, *args, **kwargs):
+        post = get_object_or_404(Post, pk=kwargs.get('pk'))
+        form = self.get_form_class()(request.POST)
+        if form.is_valid():
+            note = form.cleaned_data.get('note')
+            user = request.user
+            if not Favorite.objects.filter(user=user, post=post).exists():
+                Favorite.objects.create(user=user, post=post, note=note)
+                messages.success(request, 'Статья была добавлена в избранное')
+        return redirect('index')

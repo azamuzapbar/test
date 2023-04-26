@@ -3,33 +3,67 @@
 {% block title %} Guest book {% endblock %}
 {% block menu %} {% endblock %}
 {% block content %}
+{% load django_bootstrap5 %}
+
 {% if request.user.is_authenticated %}
 {% else %}
 <p>You must be authenticated</p>
 {% endif %}
 <div class="row justify-content-center">
     {% for post in posts %}
-    <div class="card post-card">
-        <div class="card-body">
-            {% if post.image %}
-            <img class="card-img-top" src="{{ post.image.url }}" alt="{{ post.description }}">
-            {% endif %}
-            <div class="post-card-footer">
-                <p class="card-text mb-0">
-                    Likes: <span class="like-count">{{ post.like_count }}</span>
-                    <a href="{% url 'like_post' post.id %}" class="like-btn">
-                        <img src="{% static 'like.png' %}" alt="Like">
-                    </a>
-                </p>
-                <p class="card-text mb-0">{{ post.author.username }}{{ post.description }}</p>
-                <p class="card-text mb-0">{{ post.created_at }}</p>
+    <div class="col-md-4">
+        <div class="card post-card">
+            <div class="card-body">
+                {% if post.image %}
+                <p><a href="{% url 'post_delete' post.pk %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-x-circle"
+                         viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                    <a href="{% url 'post_detail' pk=post.pk %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-arrow-up-right-square" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                              d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm5.854 8.803a.5.5 0 1 1-.708-.707L9.243 6H6.475a.5.5 0 1 1 0-1h3.975a.5.5 0 0 1 .5.5v3.975a.5.5 0 1 1-1 0V6.707l-4.096 4.096z"/>
+                    </svg></a>
+                </a></p>
+                <img class="card-img-top" src="{{ post.image.url }}" alt="{{ post.description }}">
+                {% endif %}
+                <div class="post-card-footer">
+                    <p class="card-text mb-0">
+                        Likes: <span class="like-count">{{ post.like_count }}</span>
+                        <a href="{% url 'like_post' post.id %}" class="like-btn">
+                            <img src="{% static 'like.png' %}" alt="Like">
+                        </a>
+                        Количество прочтении: {{post.views_count}}
+                    </p>
+                    <p class="card-text mb-0">{{ post.author.username }}{{ post.description }}</p>
+                    <p class="card-text mb-0">{{ post.created_at }}</p>
+                    <form action="{% url 'to_favorite' post.pk %}" method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form favorite_form %}
+                        {% bootstrap_button button_type="submit" content='Добавить в избранное' %}
+                    </form>
+                </div>
             </div>
-        </div>
-        <div class="card-footer">
-            <p><a href="{% url 'comment_create' post.pk %}">Add a Comment</a></p>
+            <div class="card-footer">
+                <p><a href="{% url 'comment_create' post.pk %}">Add a Comment</a></p>
+            </div>
         </div>
     </div>
     {% endfor %}
 </div>
-<script type="text/javascript" src="{% static 'js/index.js' %}"></script>
 {% endblock %}
+
+
+<style>
+.post-card {
+  margin: 15px;
+  max-width: 850px;
+  width: 100%;
+}
+
+
+</style>

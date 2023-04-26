@@ -13,36 +13,19 @@
     <div class="col-md-4">
         <img class="avatar rounded-circle" src="{{ user_obj.avatar.url }}" width="150" height="150" alt="user picture">
         <h4>{{ user_obj.username }}</h4>
-        {% if user.is_authenticated %}
-        {% if user != account %}
-        {% if account in user.subscriptions.all %}
-        <form action="{% url 'unsubscribe' account.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">Unsubscribe</button>
-        </form>
-        {% else %}
-        <form action="{% url 'subscribe' user_obj.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">Subscribe</button>
-        </form>
-        {% endif %}
-        {% endif %}
-        {% endif %}
     </div>
 
 
     <div class="col-md-8">
         <p>Имя: {{ user_obj.first_name }}</p>
 
-        <span class="count">{{ user_obj.subscriptions_count }}</span> подписчиков
-        <br>
-        <span class="count">{{ user_obj.subscribers_count }}</span> подписок
+        <span class="count">{{ user_obj.role}}</span>
     </div>
 
 </div>
 
 <div class="row">
-    {% for post in user.posts.all %}
+    {% for post in favorite_posts %}
     <div class="col-md-4 mb-3">
         <div class="card post-card h-100">
             <a href="{% url 'post_detail' pk=post.pk %}" class="card-body">
@@ -57,10 +40,14 @@
 {% endblock %}
 
 <style>
+    body {
+        color: white;
+    }
     .avatar {
         border-radius: 50%;
     }
     .card {
         margin-bottom: 20px;
     }
+
 </style>

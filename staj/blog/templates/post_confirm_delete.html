@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% endblock %}
+
+{% block menu %}
+
+{% endblock %}
+
+{% block content %}
+    <h1>Do you realy want to delete?</h1>
+    <form action="{% url 'confirm_delete' post.pk %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes</button>
+        <a href="{% url 'index' %}" class="btn btn-primary">No</a>
+    </form>
+
+{% endblock %}

@@ -12,32 +12,17 @@ from django.views.generic import TemplateView, CreateView, DetailView, UpdateVie
 
 
 
-from posts.forms import SearchForm
+from blog.forms import SearchForm
 
-from posts.models import Post
+from blog.models import Post
 
 from accounts.forms import CustomUserCreationForm, UserChangeForm,LoginForm
 
 from accounts.models import Account
 
+from blog.models import Favorite
 
-def subscribe_to_account(request, pk):
-    account_to_subscribe = get_object_or_404(Account, pk=pk)
-
-    if request.user == account_to_subscribe:
-        messages.error(request, 'Вы не можете подписаться на себя.')
-        return redirect('index')
-
-    if account_to_subscribe.subscribers.filter(pk=request.user.pk).exists():
-        messages.info(request, 'Вы уже подписаны на этот аккаунт.')
-        return redirect('index')
-
-    request.user.subscriptions.add(account_to_subscribe)
-    account_to_subscribe.subscribers_count += 1
-    account_to_subscribe.save()
-    request.user.save()
-    messages.success(request, f'Вы успешно подписались на {account_to_subscribe.username}.')
-    return redirect('index')
+from blog.forms import FavoriteForm
 
 
 class LoginView(TemplateView):
@@ -93,14 +78,17 @@ class ProfileView(LoginRequiredMixin, DetailView):
     template_name = 'user_detail.html'
     context_object_name = 'user_obj'
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = SearchForm
         user = self.get_object()
+        favorite_posts = Favorite.objects.filter(user=user).values_list('post__pk', flat=True)
+        posts = Post.objects.filter(pk__in=favorite_posts)
+        form = FavoriteForm()
         context['form'] = form
-        context['posts'] = Post.objects.filter(author=user).order_by('-created_at')
+        context['favorite_posts'] = posts
+        context['favorite_label'] = 'Избранное'
         return context
+
 
 
 class UserChangeView(UpdateView):
@@ -142,31 +130,5 @@ class UserChangeView(UpdateView):
     def get_success_url(self):
         return reverse('profile', kwargs={'pk': self.object.pk})
 
-    def subscribe(self, user):
-        """
-        Add a subscription to another user
-        """
-        if self.subscriptions.filter(pk=user.pk).exists():
-            return False  # Subscription already exists
-        else:
-            self.subscriptions.add(user)
-            self.subscriptions_count += 1
-            self.save()
-            user.subscribers_count += 1
-            user.save()
-            return True
 
-    def unsubscribe(self, user):
-        """
-        Remove a subscription from another user
-        """
-        if self.subscriptions.filter(pk=user.pk).exists():
-            self.subscriptions.remove(user)
-            self.subscriptions_count -= 1
-            self.save()
-            user.subscribers_count -= 1
-            user.save()
-            return True
-        else:
-            return False
 

@@ -2,16 +2,12 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
+from accounts.models import ROLE_CHOICES
+
 
 class LoginForm(forms.Form):
     email = forms.CharField(required=True, label='Логин')
     password = forms.CharField(required=True, label='Пароль', widget=forms.PasswordInput)
-
-
-GENDER_CHOICES = (
-    ('male', 'Male'),
-    ('female', 'Female'),
-)
 
 
 class CustomUserCreationForm(forms.ModelForm):
@@ -23,13 +19,13 @@ class CustomUserCreationForm(forms.ModelForm):
     password = forms.CharField(label='Пароль', strip=False, required=True, widget=forms.PasswordInput)
     password_confirm = forms.CharField(label='Подтвердите пароль', strip=False, required=True,
                                        widget=forms.PasswordInput)
-    gender = forms.ChoiceField(label='Пол', choices=GENDER_CHOICES, widget=forms.RadioSelect())
+    role = forms.ChoiceField(label='Роль', choices=ROLE_CHOICES, widget=forms.RadioSelect())
 
     class Meta:
         model = get_user_model()
         fields = (
-            'username', 'email', 'avatar', 'password', 'password_confirm', 'username', 'info', 'phone_number',
-            'gender')
+            'username', 'email', 'avatar', 'password', 'password_confirm',
+            'role')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -49,4 +45,4 @@ class CustomUserCreationForm(forms.ModelForm):
 class UserChangeForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
-        fields = ('username', 'first_name', 'last_name', 'info', 'phone_number', 'email', 'avatar', 'gender','birth_date')
+        fields = ('username', 'first_name', 'last_name', 'email', 'avatar', 'role')

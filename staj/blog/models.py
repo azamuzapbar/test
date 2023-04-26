@@ -10,7 +10,7 @@ class Post(models.Model):
                                on_delete=models.CASCADE)
     created_at = models.DateTimeField(verbose_name='Дата создания публикации', auto_now_add=True)
     like_count = models.IntegerField(default=0)
-
+    views_count = models.IntegerField(default=0)
 
 class Comment(models.Model):
     author = models.ForeignKey(verbose_name='Автор', to=get_user_model(), related_name='comments', null=False,
@@ -29,3 +29,29 @@ class Like(models.Model):
 
     class Meta:
         unique_together = ('user', 'post')
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        to=get_user_model(),
+        related_name='favorite_posts',
+        verbose_name='Избранное',
+        null=False,
+        on_delete=models.CASCADE
+    )
+    post = models.ForeignKey(
+        to=Post,
+        related_name='favorite_users',
+        verbose_name='Избранное',
+        null=False,
+        on_delete=models.CASCADE
+    )
+    note = models.CharField(
+        max_length=30,
+        verbose_name='Текстовая заметка',
+        null=False,
+        blank=True
+    )
+
+    class Meta:
+        verbose_name = 'Избранная запись',
+        verbose_name_plural = 'Избранные записи'

@@ -1,0 +1,21 @@
+body {
+  color: #CD5C5C;
+}
+
+.post-card {
+  margin: 15px;
+  max-width: 850px;
+  width: 100%;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: black;
+}
+
+.navbar {
+  background-color: #fff;
+}
+
+.navbar-brand img {
+  height: 50px;
+}
