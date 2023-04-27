@@ -15,7 +15,7 @@ class CustomUserCreationForm(forms.ModelForm):
                                widget=forms.TextInput, required=True)
     email = forms.CharField(min_length=7, max_length=70, required=True,
                             widget=forms.EmailInput)
-    avatar = forms.ImageField(required=True)
+    avatar = forms.ImageField(required=False)
     password = forms.CharField(label='Пароль', strip=False, required=True, widget=forms.PasswordInput)
     password_confirm = forms.CharField(label='Подтвердите пароль', strip=False, required=True,
                                        widget=forms.PasswordInput)

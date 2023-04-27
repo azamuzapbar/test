@@ -9,6 +9,24 @@
 {% else %}
 <p>You must be authenticated</p>
 {% endif %}
+
+<form method="GET" action="{% url 'index' %}">
+  <div class="form-row align-items-center">
+    <div class="col-auto my-1">
+      <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="order_by">
+        <option value="likes_count" {% if request.GET.order_by == 'likes_count' %} selected {% endif %}>Sort by likes count</option>
+        <option value="views_count" {% if request.GET.order_by == 'views_count' %} selected {% endif %}>Sort by views count</option>
+        <option value="created_at" {% if request.GET.order_by == 'created_at' %} selected {% endif %}>Sort by creation date</option>
+      </select>
+    </div>
+    <div class="col-auto my-1">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </div>
+</form>
+
+
+
 <div class="row justify-content-center">
     {% for post in posts %}
     <div class="col-md-4">

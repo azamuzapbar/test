@@ -18,7 +18,11 @@ from blog.views.base import FavoriteView
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
-    path('posts/add/', PostCreateView.as_view(), name='post_add'),
+                  path('filter/likes_count/', IndexView.as_view(), name='filter_likes_count'),
+                  path('filter/views_count/', IndexView.as_view(), name='filter_views_count'),
+                  path('filter/created_at/', IndexView.as_view(), name='filter_created_at'),
+
+                  path('posts/add/', PostCreateView.as_view(), name='post_add'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post_detail'),
     path('post/<int:pk>/comment/create/', CommentCreateView.as_view(), name='comment_create'),
     path('posts/<int:post_id>/like/', post_add.LikeView.as_view(), name='like_post'),

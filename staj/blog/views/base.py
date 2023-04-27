@@ -12,7 +12,7 @@ class IndexView(ListView):
     template_name = 'index.html'
     model = Post
     context_object_name = 'posts'
-
+    ordering = ['-views_count']
 
     def get(self, request, *args, **kwargs):
         self.form = self.get_search_form()
@@ -29,9 +29,15 @@ class IndexView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        if self.search_value:
-            query = Q(author__username__icontains=self.search_value) | Q(author__email__icontains=self.search_value)
-            queryset = queryset.filter(query)
+        order_by = self.request.GET.get('order_by')
+
+        if order_by == 'likes_count':
+            queryset = queryset.order_by('-like_count')
+        elif order_by == 'views_count':
+            queryset = queryset.order_by('-views_count')
+        elif order_by == 'created_at':
+            queryset = queryset.order_by('-created_at')
+
         return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -41,6 +47,8 @@ class IndexView(ListView):
         if self.search_value:
             context['query'] = urlencode({'search': self.search_value})
         return context
+
+
 
 class FavoriteView(LoginRequiredMixin, FormView):
     form_class = FavoriteForm
@@ -54,3 +62,5 @@ class FavoriteView(LoginRequiredMixin, FormView):
                 Favorite.objects.create(user=user, post=post, note=note)
                 messages.success(request, 'Статья была добавлена в избранное')
         return redirect('index')
+
+
